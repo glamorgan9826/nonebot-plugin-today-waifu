@@ -6,32 +6,52 @@
 
 <div align="center">
 
-# nonebot-plugin-example
+# nonebot-plugin-today-waifu
 
-_✨ NoneBot 插件简单描述 ✨_
+_✨ 随机抽取群友作为老婆吧！ ✨_
 
 
 <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/owner/nonebot-plugin-example.svg" alt="license">
+    <img src="https://img.shields.io/github/license/glamorgan9826/nonebot-plugin-today-waifu.svg" alt="license">
 </a>
-<a href="https://pypi.python.org/pypi/nonebot-plugin-example">
-    <img src="https://img.shields.io/pypi/v/nonebot-plugin-example.svg" alt="pypi">
+<a href="https://pypi.python.org/pypi/nonebot-plugin-today-waifu">
+    <img src="https://img.shields.io/pypi/v/nonebot-plugin-today-waifu.svg" alt="pypi">
 </a>
 <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="python">
 
 </div>
 
-这是一个 nonebot2 插件项目的模板库, 你可以直接使用本模板创建你的 nonebot2 插件项目的仓库
-
-模板库使用方法:
-1. 点击仓库中的 "Use this template" 按钮, 输入仓库名与描述, 点击 "  Create repository from template" 创建仓库
-2. 在创建好的新仓库中, 在 "Add file" 菜单中选择 "Create new file", 在新文件名处输入`LICENSE`, 此时在右侧会出现一个 "Choose a license template" 按钮, 点击此按钮选择开源协议模板, 然后在最下方提交新文件到主分支
-3. 全局替换`owner`为仓库所有者ID; 全局替换`nonebot-plugin-example`为插件名; 全局替换`nonebot_plugin_example`为包名; 修改 python 徽标中的版本为你插件的运行所需版本
-4. 修改 README 中的插件名和插件描述, 并在下方填充相应的内容
-
 ## 📖 介绍
 
-这里是插件的详细介绍部分
+一个能每天随机抓取群友作为老婆的插件
+
+每天会重置记录（根据本地时间判断）
+
+已经是别人老婆的成员就不会再成为别人的老婆了哦 【NTR禁止】
+
+如果剩余成员列表为空则默认机器人本身为老婆
+
+#### \>>换老婆功能
+
+如果对抽到的老婆不满意可以换老婆  
+可以指定换老婆次数上限，超过次数上限的话就没老婆了哦~
+该功能可以开启或关闭
+
+#### \>>分群记录信息
+
+每个群单独记录，包括老婆记录以及换老婆次数（不包括禁止作为老婆的id列表，那个是全局的）
+
+#### \>>可以禁止某些id被抽到
+
+全局生效，主要是为了防止Q群管家之类的机器人被抽到
+
+#### \>>支持自定义插件别名
+
+可以使用自定义名称触发抽取老婆的指令
+
+#### \>>重置群记录信息
+
+可以手动重置该群当天老婆及换老婆记录
 
 ## 💿 安装
 
@@ -39,7 +59,7 @@ _✨ NoneBot 插件简单描述 ✨_
 <summary>使用 nb-cli 安装</summary>
 在 nonebot2 项目的根目录下打开命令行, 输入以下指令即可安装
 
-    nb plugin install nonebot-plugin-example
+    nb plugin install nonebot-plugin-today-waifu
 
 </details>
 
@@ -50,44 +70,65 @@ _✨ NoneBot 插件简单描述 ✨_
 <details>
 <summary>pip</summary>
 
-    pip install nonebot-plugin-example
+    pip install nonebot-plugin-today-waifu
+
 </details>
 <details>
 <summary>pdm</summary>
 
-    pdm add nonebot-plugin-example
+    pdm add nonebot-plugin-today-waifu
+
 </details>
 <details>
 <summary>poetry</summary>
 
-    poetry add nonebot-plugin-example
+    poetry add nonebot-plugin-today-waifu
+
 </details>
 <details>
 <summary>conda</summary>
 
-    conda install nonebot-plugin-example
+    conda install nonebot-plugin-today-waifu
+
 </details>
 
 打开 nonebot2 项目根目录下的 `pyproject.toml` 文件, 在 `[tool.nonebot]` 部分追加写入
 
-    plugins = ["nonebot_plugin_example"]
+    plugins = ["nonebot_plugin_today_waifu"]
 
 </details>
 
 ## ⚙️ 配置
 
-在 nonebot2 项目的`.env`文件中添加下表中的必填配置
+在 nonebot2 项目的`.env`文件中添加下表中的配置，实际上可以都不填写
 
-| 配置项 | 必填 | 默认值 | 说明 |
-|:-----:|:----:|:----:|:----:|
-| 配置项1 | 是 | 无 | 配置说明 |
-| 配置项2 | 否 | 无 | 配置说明 |
+|               配置项                | 必填  | 类型        |                 默认值                 |                   说明                   |
+|:--------------------------------:|:---:|-----------|:-----------------------------------:|:--------------------------------------:|
+|     TODAY_WAIFU_BAN_ID_LIST      |  否  | List[int] |                 []                  |              列表内的id不会被抽到               |
+| TODAY_WAIFU_DEFAULT_CHANGE_WAIFU |  否  | bool      |                true                 |            是否默认开启换老婆功能，默认开启            |
+| TODAY_WAIFU_DEFAULT_LIMIT_TIMES  |  否  | int       |                  3                  |                允许换老婆次数                 |
+|       TODAY_WAIFU_ALIASES        |  否  | List[str] |              ["每日老婆"]               | 今日老婆插件的别名，允许设置多个，即除了"今日老婆"外，也可以用别名触发指令 |
+|      TODAY_WAIFU_RECORD_DIR      |  否  | str       | "nonebot_plugin_today_waifu/record" |       记录保存路径，默认在插件目录下新建record文件夹       |
+
+    # today-waifu 配置样例
+    TODAY_WAIFU_BAN_ID_LIST = [2854196310,123456]
+    TODAY_WAIFU_DEFAULT_CHANGE_WAIFU = true
+    TODAY_WAIFU_DEFAULT_LIMIT_TIMES = 3
+    TODAY_WAIFU_ALIASES = ["每日老婆","我的老婆"]
+    # TODAY_WAIFU_RECORD_DIR= "" 一般不需要填写，如果需要请填写绝对路径
 
 ## 🎉 使用
+
 ### 指令表
-| 指令 | 权限 | 需要@ | 范围 | 说明 |
-|:-----:|:----:|:----:|:----:|:----:|
-| 指令1 | 主人 | 否 | 私聊 | 指令说明 |
-| 指令2 | 群员 | 是 | 群聊 | 指令说明 |
+
+|            指令            | 权限  | 需要@ | 范围  |                说明                |
+|:------------------------:|:---:|:---:|:---:|:--------------------------------:|
+|        今日老婆/自定义别名        | 群员  |  否  | 群聊  | 随机抽取群友作为老婆，返回头像和昵称。当天已经抽取过回复相同老婆 |
+|           换老婆            | 群员  |  否  | 群聊  |              重新抽取老婆              |
+| (刷新/重置)今日老婆/(刷新/重置)自定义别名 | 主人  |  否  | 群聊  |            清空今日本群老婆数据            |
+|        (开启/关闭)换老婆        | 主人  |  否  | 群聊  |           开启/关闭本群换老婆功能           |
+|         设置换老婆次数n         | 主人  |  否  | 群聊  |         设置本群换老婆最大次数，n为整数         |
+
 ### 效果图
-如果有效果图的话
+
+暂无
