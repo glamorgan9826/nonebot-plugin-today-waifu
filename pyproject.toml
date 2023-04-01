@@ -7,7 +7,6 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/glamorgan9826/nonebot-plugin-today-waifu"
 repository = "https://github.com/glamorgan9826/nonebot-plugin-today-waifu"
-packages = [{include = "nonebot_plugin_today_waifu"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
