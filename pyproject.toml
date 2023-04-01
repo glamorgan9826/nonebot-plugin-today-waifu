@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "nonebot_plugin_today_waifu"
+version = "0.1.0"
+description = "Nonebot2插件 可以随机抽取群友作为老婆"
+authors = ["glamorgan9826 <glamorgan9826@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/glamorgan9826/nonebot-plugin-today-waifu"
+repository = "https://github.com/glamorgan9826/nonebot-plugin-today-waifu"
+packages = [{include = "nonebot_plugin_today_waifu"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+nonebot2 = { version = "^2.0.0-rc.1", extras = ["fastapi"] }
+nonebot-adapter-onebot = "^2.1.1"
+httpx = ">=0.19.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
