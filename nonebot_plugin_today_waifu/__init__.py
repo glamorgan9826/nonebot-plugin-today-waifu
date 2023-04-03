@@ -73,13 +73,13 @@ today_waifu_set_allow_change = on_regex(
 async def _(event: GroupMessageEvent, val: Dict[str, Any] = RegexDict()):
     gid = str(event.group_id)
     group_record: Dict[str, Union[bool, Dict[str, Dict[str, int]]]] = get_group_record(gid)  # 获取本群记录字典
-    val: str = val.get('val', str(default_allow_change_waifu)).strip()
+    val: str = val.get('val', '').strip()
     if val == '开启换老婆':
         group_record['allow_change_waifu'] = True
     elif val == '关闭换老婆':
         group_record['allow_change_waifu'] = False
     else:
-        group_record['allow_change_waifu'] = bool(val)
+        await today_waifu_set_allow_change.finish()
     save_group_record(gid, group_record)
     await today_waifu_set_allow_change.finish(f'本群设置为{val}')
 
