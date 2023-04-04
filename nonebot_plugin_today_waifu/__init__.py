@@ -42,7 +42,7 @@ __plugin_meta__ = PluginMetadata(
         "  ▷ 参数：\n"
         "    ▷ N：指定整数次数"
     ),
-    ConfigModel,
+    Config,
     {"License": "MIT", "Author": "glamorgan9826"},
 )
 
