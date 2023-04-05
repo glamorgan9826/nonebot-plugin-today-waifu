@@ -7,6 +7,7 @@ import nonebot
 from nonebot import on_regex
 from nonebot.params import RegexDict
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Bot
 from nonebot.adapters.onebot.v11 import GROUP, GroupMessageEvent, ActionFailed, Message
 
@@ -15,6 +16,35 @@ from .record import get_group_record, save_group_record, construct_waifu_msg, cl
     construct_change_waifu_msg
 
 __plugin_name__ = '今日老婆'
+__plugin_meta__ = PluginMetadata(
+    __plugin_name__,
+    "随机抽取群友作为老婆吧！",
+    (
+        "指令表：\n"
+        "▶ 今日老婆\n"
+        "  ▷ 范围：群聊\n"
+        "  ▷ 介绍：随机抽取群友作为老婆，返回头像和昵称。当天已经抽取过回复相同老婆\n"
+        "▶ 换老婆\n"
+        "  ▷ 范围：群聊\n"
+        "  ▷ 介绍：重新抽取老婆\n"
+        "▶ (刷新/重置)今日老婆 | (刷新/重置)自定义别名\n"
+        "  ▷ 权限：主人\n"
+        "  ▷ 范围：群聊\n"
+        "  ▷ 介绍：清空今日本群老婆数据\n"
+        "▶ (开启/关闭)换老婆\n"
+        "  ▷ 权限：主人\n"
+        "  ▷ 范围：群聊\n"
+        "  ▷ 介绍：开启/关闭本群换老婆功能\n"
+        "▶ 设置换老婆次数 <N>\n"
+        "  ▷ 权限：主人\n"
+        "  ▷ 范围：群聊\n"
+        "  ▷ 介绍：设置本群换老婆最大次数\n"
+        "  ▷ 参数：\n"
+        "    ▷ N：指定整数次数"
+    ),
+    Config,
+    {"License": "MIT", "Author": "glamorgan9826"},
+)
 
 global_config = nonebot.get_driver().config
 waifu_config: Config = Config.parse_obj(global_config.dict())
