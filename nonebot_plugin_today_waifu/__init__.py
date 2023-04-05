@@ -43,7 +43,11 @@ __plugin_meta__ = PluginMetadata(
         "    ▷ N：指定整数次数"
     ),
     Config,
-    {"License": "MIT", "Author": "glamorgan9826"},
+    {
+        "License": "MIT",
+        "Author": "glamorgan9826",
+        "version": "0.1.1",
+    },
 )
 
 global_config = nonebot.get_driver().config

@@ -138,3 +138,7 @@ _✨ 随机抽取群友作为老婆吧！ ✨_
 - [Nonebot](https://github.com/nonebot/nonebot2): 本项目的基础，非常好用的聊天机器人框架。
 - [dailywife](https://github.com/SonderXiaoming/dailywife): 本项目的灵感及思路来源。
 - [petpet](https://github.com/noneplugin/nonebot-plugin-petpet): 本项目获取群友头像的功能代码来源。
+
+## 📋版本历史
+- 0.1.0 初始版本
+- 0.1.1 更新metadata及修复一些bug
