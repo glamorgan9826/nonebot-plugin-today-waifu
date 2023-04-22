@@ -16,6 +16,7 @@ from .record import get_group_record, save_group_record, construct_waifu_msg, cl
     construct_change_waifu_msg
 
 __plugin_name__ = '今日老婆'
+__plugin_version__ = '0.1.2'
 __plugin_meta__ = PluginMetadata(
     __plugin_name__,
     "随机抽取群友作为老婆吧！",
@@ -46,7 +47,7 @@ __plugin_meta__ = PluginMetadata(
     {
         "License": "MIT",
         "Author": "glamorgan9826",
-        "version": "0.1.1",
+        "version": __plugin_version__,
     },
 )
 
@@ -181,13 +182,17 @@ async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     uid = str(event.user_id)
     today = str(datetime.date.today())
-    group_record: Dict[str, Dict[str, Dict[str, int]]] = get_group_record(gid)  # 获取本群记录字典
+    group_record: Dict[str, Union[int, bool, Dict[str, Dict[str, int]]]] = get_group_record(gid)  # 获取本群记录字典
+    limit_times: int = group_record.setdefault('limit_times', default_limit_times)
+    allow_change_waifu: bool = group_record.setdefault('allow_change_waifu', default_allow_change_waifu)
     save = False  # 保存标记，是否将记录写入到本地文件
     is_first: bool  # 是否已经存在老婆标记
     waifu_id: int  # 老婆id
     if today not in group_record.keys():
         # 如果不存在今天的记录，清空本群记录字典，并添加今天的记录，保存标记置为真
         group_record.clear()
+        group_record['limit_times'] = limit_times
+        group_record['allow_change_waifu'] = allow_change_waifu
         group_record[today] = {}
         save = True
     group_today_record: Dict[str, Dict[str, int]] = group_record[today]  # 获取本群今日字典
