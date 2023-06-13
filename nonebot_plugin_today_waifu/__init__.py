@@ -10,13 +10,14 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Bot
 from nonebot.adapters.onebot.v11 import GROUP, GroupMessageEvent, ActionFailed, Message
+from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 
 from .config import Config
 from .record import get_group_record, save_group_record, construct_waifu_msg, clear_group_record, \
     construct_change_waifu_msg
 
 __plugin_name__ = '今日老婆'
-__plugin_version__ = '0.1.2'
+__plugin_version__ = '0.1.3'
 __plugin_meta__ = PluginMetadata(
     __plugin_name__,
     "随机抽取群友作为老婆吧！",
@@ -33,11 +34,11 @@ __plugin_meta__ = PluginMetadata(
         "  ▷ 范围：群聊\n"
         "  ▷ 介绍：清空今日本群老婆数据\n"
         "▶ (开启/关闭)换老婆\n"
-        "  ▷ 权限：主人\n"
+        "  ▷ 权限：主人/群主/管理员\n"
         "  ▷ 范围：群聊\n"
         "  ▷ 介绍：开启/关闭本群换老婆功能\n"
         "▶ 设置换老婆次数 <N>\n"
-        "  ▷ 权限：主人\n"
+        "  ▷ 权限：主人/群主/管理员\n"
         "  ▷ 范围：群聊\n"
         "  ▷ 介绍：设置本群换老婆最大次数\n"
         "  ▷ 参数：\n"
@@ -58,6 +59,11 @@ plugin_aliases: List[str] = waifu_config.today_waifu_aliases
 ban_id: Set[int] = waifu_config.today_waifu_ban_id_list
 default_allow_change_waifu: bool = waifu_config.today_waifu_default_change_waifu
 default_limit_times: int = waifu_config.today_waifu_default_limit_times
+today_waifu_superuser_opt: bool = waifu_config.today_waifu_superuser_opt
+if today_waifu_superuser_opt:
+    permission_opt = SUPERUSER
+else:
+    permission_opt = SUPERUSER | GROUP_OWNER | GROUP_ADMIN
 
 # 正则匹配插件名与别名的字符串
 PatternStr = '|'.join([__plugin_name__, ] + plugin_aliases)
@@ -91,14 +97,14 @@ today_waifu_change = on_regex(
 # 设置所在群换老婆最大次数
 today_waifu_set_limit_times = on_regex(
     pattern=rf"^\s*设置换老婆次数(?P<times>\d+)\s*$",
-    permission=SUPERUSER,
+    permission=permission_opt,
     priority=7,
     block=True
 )
 
 today_waifu_set_allow_change = on_regex(
     pattern=rf"^\s*(?P<val>开启换老婆|关闭换老婆)\s*$",
-    permission=SUPERUSER,
+    permission=permission_opt,
     priority=7,
     block=True
 )
