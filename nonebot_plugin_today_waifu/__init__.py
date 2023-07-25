@@ -17,7 +17,7 @@ from .record import get_group_record, save_group_record, construct_waifu_msg, cl
     construct_change_waifu_msg
 
 __plugin_name__ = '今日老婆'
-__plugin_version__ = '0.1.4'
+__plugin_version__ = '0.1.5'
 __plugin_meta__ = PluginMetadata(
     __plugin_name__,
     "随机抽取群友作为老婆吧！",

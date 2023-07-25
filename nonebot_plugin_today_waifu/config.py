@@ -18,7 +18,7 @@ class Config(BaseModel, extra=Extra.ignore):
 
     @validator('today_waifu_ban_id_list', pre=True)
     def check_ban_id(cls, v: List[int]) -> Set[int]:
-        if not isinstance(v, Union[list, set]):
+        if not (isinstance(v, list) or isinstance(v, set)):
             return set()
         return set(map(int, v))
 

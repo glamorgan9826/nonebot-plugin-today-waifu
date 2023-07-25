@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_today_waifu"
-version = "0.1.4"
+version = "0.1.5"
 description = "Nonebot2插件 可以随机抽取群友作为老婆"
 authors = ["glamorgan9826 <glamorgan9826@gmail.com>"]
 license = "MIT"
