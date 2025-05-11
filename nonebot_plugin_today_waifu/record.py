@@ -223,8 +223,8 @@ class SceneRecord(BaseModel):
         # 自动设置另一半(仅在对方没有抽取过waifu的情况下)
         if self.auto_set_other_half and self.waifu_change_record.get(waifu_id, 0) < 1:
             self.waifu_record[waifu_id] = user_id
+        self.save()
 
-    @auto_save
     async def change_waifu(self, session: Uninfo, interface: Interface) -> UniMessage:
         self._today_check()
         user = session.user
@@ -258,7 +258,6 @@ class SceneRecord(BaseModel):
             waifu_id,
         )
 
-    @auto_save
     async def get_waifu(self, session: Uninfo, interface: Interface) -> UniMessage:
         self._today_check()
         user = session.user
