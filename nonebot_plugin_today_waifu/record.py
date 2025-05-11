@@ -32,8 +32,11 @@ class ActiveRecord(BaseModel):
     # 今日发言用户id记录
     today_speak_record: Set[str] = Field(default_factory=set)
 
-    def log_speak_record(self, user_id: str):
+    def log_speak_record(self, user_id: str) -> bool:
+        if user_id in self.today_speak_record:
+            return False
         self.today_speak_record.add(user_id)
+        return True
 
     def update_active_record(self):
         for uid in self.today_speak_record:
@@ -141,9 +144,9 @@ class SceneRecord(BaseModel):
     def set_active_days(self, days: int):
         self.active_record.set_active_days(days)
 
-    @auto_save
     def log_speak_record(self, user_id: str):
-        self.active_record.log_speak_record(user_id)
+        if self.active_record.log_speak_record(user_id):
+            self.save()
 
     @auto_save
     def update_active_record(self):
