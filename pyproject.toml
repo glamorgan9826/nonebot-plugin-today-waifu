@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-plugin-today-waifu"
-version = "0.1.6"
+version = "0.1.7"
 description = "Nonebot2插件 可以随机抽取群友作为老婆"
 authors = [
     {name = "glamorgan9826",email = "glamorgan9826@gmail.com"}

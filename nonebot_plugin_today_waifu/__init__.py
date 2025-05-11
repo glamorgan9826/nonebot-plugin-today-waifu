@@ -6,13 +6,13 @@ from nonebot import require, on_regex, on_message, on_notice
 from nonebot.params import RegexDict
 from nonebot.permission import SUPERUSER
 from nonebot.drivers.websockets import logger
-from nonebot.plugin import PluginMetadata, get_plugin_config
+from nonebot.plugin import PluginMetadata, get_plugin_config, inherit_supported_adapters
 
 require("nonebot_plugin_alconna")
 require("nonebot_plugin_uninfo")
 
 from nonebot_plugin_alconna import UniMessage
-from nonebot_plugin_uninfo import Uninfo, QryItrface, SupportAdapterModule, ADMIN, GROUP
+from nonebot_plugin_uninfo import Uninfo, QryItrface, ADMIN, GROUP
 
 from .config import Config
 from .record import SceneManager, SceneRecord
@@ -34,14 +34,18 @@ __plugin_usage__ = (
     "[刷新 | 重置今日老婆] 刷新本群记录[仅超管]"
 )
 
+__plugin_version__ = "0.1.7"
+
 __plugin_meta__ = PluginMetadata(
     name=__plugin_name__,
     description="随机抽取群友作为老婆吧！",
     usage=__plugin_usage__,
-    type="library",
+    type="application",
     config=Config,
     homepage="https://github.com/glamorgan9826/nonebot-plugin-today-waifu",
-    supported_adapters=set(SupportAdapterModule.__members__.values()),
+    supported_adapters=inherit_supported_adapters(
+        "nonebot_plugin_alconna", "nonebot_plugin_uninfo"
+    ),
 )
 
 driver = nonebot.get_driver()
