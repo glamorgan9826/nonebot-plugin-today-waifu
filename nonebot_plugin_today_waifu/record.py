@@ -221,7 +221,7 @@ class SceneRecord(BaseModel):
         self.waifu_record[user_id] = waifu_id
         self.waifu_change_record[user_id] = self.waifu_change_record.get(user_id, 0) + 1
         # 自动设置另一半(仅在对方没有抽取过waifu的情况下)
-        if self.auto_set_other_half and self.waifu_change_record.get(user_id, 0) < 1:
+        if self.auto_set_other_half and self.waifu_change_record.get(waifu_id, 0) < 1:
             self.waifu_record[waifu_id] = user_id
 
     @auto_save
