@@ -34,7 +34,7 @@ __plugin_usage__ = (
     "[刷新 | 重置今日老婆] 刷新本群记录[仅超管]"
 )
 
-__plugin_version__ = "0.1.7"
+__plugin_version__ = "0.1.8"
 
 __plugin_meta__ = PluginMetadata(
     name=__plugin_name__,
