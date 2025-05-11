@@ -198,7 +198,7 @@ class SceneRecord(BaseModel):
         return session.self_id
 
     async def select_active(self, user_id: str, session: Uninfo, interface: Interface) -> str:
-        id_set = set(self.active_record.keys()) - set(self.waifu_record.values()) - BAN_ID
+        id_set = set(self.active_record.keys()) | {session.self_id} - set(self.waifu_record.values()) - BAN_ID
         id_set.discard(user_id)
         if len(id_set) >= 5:
             return random.choice(list(id_set))
