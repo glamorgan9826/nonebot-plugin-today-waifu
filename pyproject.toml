@@ -3,9 +3,9 @@ name = "nonebot-plugin-today-waifu"
 version = "0.1.7"
 description = "Nonebot2插件 可以随机抽取群友作为老婆"
 authors = [
-    {name = "glamorgan9826",email = "glamorgan9826@gmail.com"}
+    { name = "glamorgan9826", email = "glamorgan9826@gmail.com" }
 ]
-license = {text = "MIT"}
+license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.9,<4.0"
 homepage = "https://github.com/glamorgan9826/nonebot-plugin-today-waifu"
