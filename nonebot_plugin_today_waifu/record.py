@@ -5,6 +5,7 @@ from typing import Literal, Set, Dict
 
 from pydantic import BaseModel, Field
 
+from nonebot.compat import PYDANTIC_V2
 from nonebot import get_plugin_config, logger
 from nonebot_plugin_alconna import UniMessage
 from nonebot_plugin_uninfo import Uninfo, SceneType, Scene, Interface
@@ -94,11 +95,18 @@ class SceneRecord(BaseModel):
             f"活跃天数：{self.active_record.active_days}\n"
         )
 
+    def common_dump_json(self) -> str:
+        return self.model_dump_json() if PYDANTIC_V2 else self.json()
+
+    @classmethod
+    def common_load(cls, data: dict) -> "SceneRecord":
+        return cls.model_validate(data) if PYDANTIC_V2 else cls.parse_obj(data)
+
     def save(self):
         if not self.file_path.parent.exists():
             self.file_path.parent.mkdir(parents=True, exist_ok=True)
         with self.file_path.open("w", encoding="utf-8") as f:
-            f.write(self.model_dump_json())
+            f.write(self.common_dump_json())
 
     async def add_member(self, user_id: str, session: Uninfo, interface: Interface):
         if not self.member_cache.members:
@@ -198,7 +206,7 @@ class SceneRecord(BaseModel):
         return session.self_id
 
     async def select_active(self, user_id: str, session: Uninfo, interface: Interface) -> str:
-        id_set = set(self.active_record.keys()) | {session.self_id} - set(self.waifu_record.values()) - BAN_ID
+        id_set = set(self.active_record.active_record.keys()) | {session.self_id} - set(self.waifu_record.values()) - BAN_ID
         id_set.discard(user_id)
         if len(id_set) >= 5:
             return random.choice(list(id_set))
@@ -301,7 +309,7 @@ class SceneManager:
                     continue
                 with open(record_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    scene = SceneRecord.model_validate(data)
+                    scene = SceneRecord.common_load(data)
                     self.scenes[scene.id] = scene
             except json.JSONDecodeError:
                 logger.warning(f"Today Waifu: Failed to load scene record from {dir_path}")

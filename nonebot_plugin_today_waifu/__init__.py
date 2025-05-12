@@ -34,7 +34,7 @@ __plugin_usage__ = (
     "[刷新 | 重置今日老婆] 刷新本群记录[仅超管]"
 )
 
-__plugin_version__ = "0.1.8"
+__plugin_version__ = "0.1.9"
 
 __plugin_meta__ = PluginMetadata(
     name=__plugin_name__,
@@ -142,17 +142,17 @@ today_waifu_info = on_regex(
     block=True,
 )
 
-today_waifu_active_member = on_message(
-    permission=GROUP,
-    priority=1,
-    block=False,
-)
-
 today_waifu_usage = on_regex(
     pattern=rf"^\s*({PatternStr})帮助\s*$",
     permission=permission_opt,
     priority=7,
     block=True,
+)
+
+today_waifu_active_member = on_message(
+    permission=GROUP,
+    priority=1,
+    block=False,
 )
 
 
@@ -187,6 +187,11 @@ async def _(session: Uninfo):
     scene_record: SceneRecord = SceneManager().get_scene(session.scene)  # 获取场景记录
     scene_record.log_speak_record(session.user.id)  # 记录群友发言
     await today_waifu_active_member.finish()
+
+
+@today_waifu_usage.handle()
+async def _():
+    await today_waifu_usage.finish(__plugin_usage__)
 
 
 @today_waifu_info.handle()
@@ -227,7 +232,7 @@ async def _(session: Uninfo, val: Dict[str, Any] = RegexDict()):
         val = "随机模式"
         scene_record.set_select_mode("random")
     elif "活跃" in val:
-        val = "随机模式"
+        val = "活跃模式"
         scene_record.set_select_mode("active")
     await today_waifu_set_select_mode.finish(f"本群设置为{val}模式")
 
