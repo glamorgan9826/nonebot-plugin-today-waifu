@@ -23,9 +23,19 @@ _✨ 随机抽取群友作为老婆吧！ ✨_
 
 ## 📖 介绍
 
-### 注意！！！0.1.6版本进行了重构以适配nonebot2新版本，pydantic升级到v2（v0.1.9已兼容 pydantic v1），存在破坏性改动：
+### 注意！！！0.1.6版本进行了重构以适配nonebot2新版本，pydantic升级到v2，存在破坏性改动：
 ### 将不兼容历史的记录，所有群配置需要重新设置；
 ### python版本从3.8升级到3.9，和nonebot2保持同步，虽然本插件仍采用了兼容3.8的写法，但不保证能正常运行。
+
+本插件自 **v0.1.9** 起兼容了 Pydantic v1 与 v2 版本<br/>
+如果在使用的过程中遇到 Pydantic 相关警告或与其他依赖v1的插件冲突导致的报错，例如：
+
+    pydantic_core._pydantic_core.ValidationError: 1 validation error for Config
+    Input should be a valid dictionary or instance of Config [type=model_type, input_value=Config(...), input_type=Config]
+
+请考虑降级 Pydantic 至 v1 版本：
+
+    pip install --force-reinstall 'pydantic~=1.10'
 
 一个能每天随机抓取群友作为老婆的插件
 
