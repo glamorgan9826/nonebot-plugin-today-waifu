@@ -2,7 +2,8 @@ import re
 from typing import Dict, Any
 
 import nonebot
-from nonebot import require, on_regex, on_message, on_notice
+from nonebot import require, on_regex
+from nonebot.message import event_postprocessor
 from nonebot.params import RegexDict
 from nonebot.permission import SUPERUSER
 from nonebot.drivers.websockets import logger
@@ -16,6 +17,7 @@ from nonebot_plugin_uninfo import Uninfo, QryItrface, ADMIN, GROUP
 
 from .config import Config
 from .record import SceneManager, SceneRecord
+from .utils import NOT_PRIVATE
 
 __plugin_name__ = "今日老婆"
 
@@ -34,7 +36,7 @@ __plugin_usage__ = (
     "[刷新 | 重置今日老婆] 刷新本群记录[仅超管]"
 )
 
-__plugin_version__ = "0.1.9"
+__plugin_version__ = "0.1.10"
 
 __plugin_meta__ = PluginMetadata(
     name=__plugin_name__,
@@ -59,11 +61,20 @@ else:
 # 正则匹配插件名与别名的字符串
 PatternStr = '|'.join([__plugin_name__, ] + plugin_config.today_waifu_aliases)
 
+
+@event_postprocessor
+async def _log_active_user(session: Uninfo):
+    if session.scene and session.user and session.user.id and not session.scene.is_private:
+        scene_record: SceneRecord = SceneManager().get_scene(session.scene)  # 获取场景记录
+        scene_record.log_speak_record(session.user.id)  # 记录群友发言
+
+
 # 响应器主体
 today_waifu = on_regex(
     pattern=rf'^\s*({PatternStr})\s*$',
     flags=re.S,
     permission=GROUP | SUPERUSER,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -72,8 +83,9 @@ today_waifu = on_regex(
 today_waifu_refresh = on_regex(
     rf"^\s*(刷新|重置)(?P<name>{PatternStr})\s*$",
     permission=SUPERUSER,
+    rule=NOT_PRIVATE,
     priority=7,
-    block=True
+    block=True,
 )
 
 # 换老婆
@@ -81,6 +93,7 @@ today_waifu_change = on_regex(
     pattern=r'^\s*换老婆\s*$',
     flags=re.S,
     permission=GROUP | SUPERUSER,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -89,6 +102,7 @@ today_waifu_change = on_regex(
 today_waifu_set_limit_times = on_regex(
     pattern=rf"^\s*设置换老婆次数\s*(?P<times>\d+)\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -96,6 +110,7 @@ today_waifu_set_limit_times = on_regex(
 today_waifu_set_allow_change = on_regex(
     pattern=rf"^\s*(?P<val>开启换老婆|关闭换老婆)\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -103,6 +118,7 @@ today_waifu_set_allow_change = on_regex(
 today_waifu_set_withdraw_delay = on_regex(
     pattern=rf"^\s*设置自动撤回延迟\s*(?P<times>\d+)\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -110,6 +126,7 @@ today_waifu_set_withdraw_delay = on_regex(
 today_waifu_set_auto_withdraw = on_regex(
     pattern=rf"^\s*(?P<val>开启自动撤回|关闭自动撤回)\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -117,6 +134,7 @@ today_waifu_set_auto_withdraw = on_regex(
 today_waifu_set_auto_set_other_half = on_regex(
     pattern=rf"^\s*(?P<val>开启自动设置对方老婆|关闭自动设置对方老婆)\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -124,6 +142,7 @@ today_waifu_set_auto_set_other_half = on_regex(
 today_waifu_set_select_mode = on_regex(
     pattern=rf"^\s*设置抽取模式\s*(?P<val>.+)$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -131,6 +150,7 @@ today_waifu_set_select_mode = on_regex(
 today_waifu_set_active_days = on_regex(
     pattern=rf"^\s*设置活跃天数\s*(?P<times>\d+)\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -138,6 +158,7 @@ today_waifu_set_active_days = on_regex(
 today_waifu_info = on_regex(
     pattern=rf"^\s*({PatternStr})信息\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
 )
@@ -145,14 +166,9 @@ today_waifu_info = on_regex(
 today_waifu_usage = on_regex(
     pattern=rf"^\s*({PatternStr})帮助\s*$",
     permission=permission_opt,
+    rule=NOT_PRIVATE,
     priority=7,
     block=True,
-)
-
-today_waifu_active_member = on_message(
-    permission=GROUP,
-    priority=1,
-    block=False,
 )
 
 
@@ -168,25 +184,15 @@ if plugin_config.today_waifu_group_member_cache:
     from nonebot.adapters.onebot.v11 import GroupIncreaseNoticeEvent, GroupDecreaseNoticeEvent
     from nonebot.adapters.onebot.v11.permission import GROUP
 
-    group_member_handle = on_notice()
 
-
-    @group_member_handle.handle()
-    async def _(session: Uninfo, interface: QryItrface,
-                event: Union[GroupIncreaseNoticeEvent, GroupDecreaseNoticeEvent]):
+    @event_postprocessor
+    async def _group_member_monitor(session: Uninfo, interface: QryItrface,
+                                  event: Union[GroupIncreaseNoticeEvent, GroupDecreaseNoticeEvent]):
         scene_record: SceneRecord = SceneManager().get_scene(session.scene)  # 获取场景记录
         if isinstance(event, GroupIncreaseNoticeEvent):
             await scene_record.add_member(session.user.id, session, interface)
         elif isinstance(event, GroupDecreaseNoticeEvent):
             await scene_record.remove_member(session.user.id, session, interface)
-        await group_member_handle.finish()
-
-
-@today_waifu_active_member.handle()
-async def _(session: Uninfo):
-    scene_record: SceneRecord = SceneManager().get_scene(session.scene)  # 获取场景记录
-    scene_record.log_speak_record(session.user.id)  # 记录群友发言
-    await today_waifu_active_member.finish()
 
 
 @today_waifu_usage.handle()

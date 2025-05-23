@@ -2,8 +2,17 @@ import datetime
 from functools import wraps
 from typing import Callable, Set
 
+from nonebot.internal.rule import Rule
+
 from nonebot_plugin_alconna import UniMessage
 from nonebot_plugin_uninfo import Uninfo, Interface
+
+
+def check_not_private(session: Uninfo) -> bool:
+    return session.scene and not session.scene.is_private
+
+
+NOT_PRIVATE = Rule(check_not_private)
 
 
 async def get_scene_members(session: Uninfo, interface: Interface) -> Set[str]:
